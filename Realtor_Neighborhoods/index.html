@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.land {
+  fill: #ddd;
+}
+
+.boundary {
+  fill: none;
+  stroke: #999;
+}
+
+</style>
+<body>
+
+	<h1>TopoJSON</h1>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+<script>
+
+var width = 960,
+    height = 800;
+
+var projection = d3.geo.mercator()
+        .scale(50000)
+        .translate([width / 2, height / 2])
+        .center([-122.4, 37.54]);
+
+
+var path = d3.geo.path()
+    .projection(projection);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+d3.json("realtor_neighborhoods.json", function(error, sf) {
+  if (error) throw error;
+
+  svg.append("path")
+      .datum(topojson.feature(sf, sf.objects.Realtor_Neighborhoods))
+      .attr("class", "land")
+      .attr("d", path);
+
+  svg.append("path")
+      .datum(topojson.mesh(sf, sf.objects.Realtor_Neighborhoods, function(a, b) { return a !== b; }))
+      .attr("class", "boundary")
+      .attr("d", path);
+});
+
+d3.select(self.frameElement).style("height", height + "px");
+
+</script>
+</body>
+</html>
