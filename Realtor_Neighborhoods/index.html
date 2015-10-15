@@ -3,7 +3,7 @@
 <style>
 
 .land {
-  fill: #ddd;
+  fill: #ccc;
 }
 
 .boundary {
@@ -11,45 +11,51 @@
   stroke: #999;
 }
 
+path {
+  fill: lightgrey;
+  stroke: #fff;
+  stroke-width: .5px;
+}
+
+path:hover {
+  fill: darkgrey;
+}
+
+
+
 </style>
 <body>
 
-	<h1>TopoJSON</h1>
+<h1>SF Realtor Neighborhoods </h1>
+
+<div id="background" style="width:960px;height:800;background:white"></div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.19/topojson.min.js"></script>
+
 <script>
 
-var width = 960,
-    height = 800;
-
-var projection = d3.geo.mercator()
-        .scale(50000)
-        .translate([width / 2, height / 2])
-        .center([-122.4, 37.54]);
-
-
+var width = 960, 
+    height = 800; 
+  
 var path = d3.geo.path()
-    .projection(projection);
+    .projection(null);
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select("#background").append("svg")
     .attr("width", width)
     .attr("height", height);
 
 d3.json("realtor_neighborhoods.json", function(error, sf) {
-  if (error) throw error;
+  if (error) return console.error(error);
+  console.log(sf);
 
-  svg.append("path")
-      .datum(topojson.feature(sf, sf.objects.Realtor_Neighborhoods))
-      .attr("class", "land")
-      .attr("d", path);
-
-  svg.append("path")
-      .datum(topojson.mesh(sf, sf.objects.Realtor_Neighborhoods, function(a, b) { return a !== b; }))
-      .attr("class", "boundary")
-      .attr("d", path);
-});
-
-d3.select(self.frameElement).style("height", height + "px");
+svg.selectAll("path")
+    .data(topojson.feature(sf, sf.objects.Realtor_Neighborhoods).features)
+    .enter()
+    .append("path")
+    .attr("d", path);
+});  
+ 
 
 </script>
 </body>
