@@ -26,7 +26,7 @@ path:hover {
 </style>
 <body>
 
-<h1>SF Realtor Neighborhoods </h1>
+<h1>SF Realtor Neighborhoods</h1>
 
 <div id="background" style="width:960px;height:800;background:white"></div>
 
@@ -41,21 +41,24 @@ var width = 960,
 var path = d3.geo.path()
     .projection(null);
 
+var nameById = d3.map();
+
 var svg = d3.select("#background").append("svg")
     .attr("width", width)
     .attr("height", height);
 
 d3.json("realtor_neighborhoods.json", function(error, sf) {
-  if (error) return console.error(error);
+  if (error) return console.error(error);  
   console.log(sf);
 
 svg.selectAll("path")
     .data(topojson.feature(sf, sf.objects.Realtor_Neighborhoods).features)
     .enter()
     .append("path")
-    .attr("d", path);
-});  
- 
+    .attr("d", path)
+    .append('svg:title').text(function(d) { /*console.log(d.properties); */ 
+      return ("Neighborhood: " +d.properties.nbrhood  + ", " + d.properties.sfar_distr); });   
+});
 
 </script>
 </body>
